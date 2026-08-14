@@ -1,0 +1,24 @@
+Standard Operating Procedure: Delivery Operations & Status Updates
+Document ID: SOP-OPS-2026-V2
+
+1. Order Ingestion & Routing
+1.1 Orders arrive via customer web portal or phone sales.
+1.2 Operations Manager manually exports orders to CSV at 7:00 AM daily.
+1.3 Lead Dispatcher assigns packages to driver routes using Excel spreadsheet sorting.
+1.4 Printed route manifests are distributed to drivers at 7:30 AM depot loading.
+
+2. Delivery Execution & Status Reporting
+2.1 Drivers proceed along assigned route manifest.
+2.2 Status changes (In Transit, Delivered, Exception) are communicated via WhatsApp group or phone call to Dispatcher.
+2.3 Dispatcher manually updates `Delivery_Tracker_2026.xlsx` master workbook.
+2.4 In case of failed delivery or damaged goods, driver records reason code on paper clipboard.
+
+3. Proof of Delivery (POD) Handling
+3.1 Driver collects physical signature on paper receipt slip.
+3.2 Physical slips are returned to warehouse intake office at end of shift (17:00 - 18:00).
+3.3 Intake staff scan paper slips into PDF archive once per week.
+
+4. Known Process Deficiencies & Risks
+- Average status latency: 2 to 6 hours between physical delivery and system update.
+- POD retrieval latency: Up to 5 business days for customer dispute resolution.
+- Route exception notification: Manual phone cascade; no automated driver re-routing.

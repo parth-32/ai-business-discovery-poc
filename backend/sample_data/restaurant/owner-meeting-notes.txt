@@ -1,0 +1,13 @@
+Meeting Notes: Bella Cucina Restaurant Inventory Review
+Date: 2026-08-11
+Participants: Chef Marco, Julia (General Manager), Leo (Supply Chain)
+
+Chef Marco: We ran out of fresh mozzarella on Friday night during peak dinner rush! We had to turn away 30 pizza orders.
+
+Julia: That's because inventory counts are done once a week on paper clipboards by kitchen prep staff. If someone spills cream or burns a batch of pasta, it isn't logged until Sunday night.
+
+Leo: Suppliers require 24-hour advance notice for orders. If kitchen staff text me on WhatsApp at 4 PM saying "We need 20kg flour tomorrow", suppliers charge 50% rush fees or refuse delivery.
+
+Chef Marco: We need real-time stock tracking linked to our POS sales. When a Margherita Pizza is ordered, the system should automatically deduct flour, tomatoes, and mozzarella from digital inventory levels!
+
+Julia: And automated reorder alerts! When mozzarella stock drops below 5kg, Leo should automatically receive a purchase draft order.

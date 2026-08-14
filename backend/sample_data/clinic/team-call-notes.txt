@@ -1,0 +1,13 @@
+Staff Call Notes: Bright Smile Dental Clinic
+Date: 2026-08-12
+Participants: Dr. Aris (Lead Dentist), Monica (Front Desk Lead), Kevin (Clinic Admin)
+
+Dr. Aris: Patients are waiting 45 minutes past their scheduled time. Why is the morning schedule always collapsing?
+
+Monica: We are booking appointments in a physical binder at the desk while taking phone calls. If two receptionists answer calls simultaneously, we double-book slots. Yesterday we had three patients scheduled for 10:00 AM with Dr. Aris.
+
+Kevin: Plus, SMS reminders are sent manually by staff typing on a clinic cell phone at 5 PM every evening. Staff forget to send them half the time, so our no-show rate is almost 25%.
+
+Monica: Patients also call constantly to reschedule or ask for available slots. If we had an online patient self-scheduling portal, 60% of receptionist calls would disappear.
+
+Dr. Aris: And intake forms! New patients spend 15 minutes in the waiting room filling out paper health history forms, which front desk then re-types into our EMR software. It creates massive bottlenecks.

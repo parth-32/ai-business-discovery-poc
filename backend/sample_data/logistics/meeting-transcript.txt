@@ -1,0 +1,19 @@
+Meeting Notes: QuickShip Logistics Operations Review
+Date: 2026-08-10
+Attendees: Dave (Operations Manager), Sarah (Customer Success), Marcus (Lead Dispatcher)
+
+Dave: Thanks for joining. We need to address our delivery tracking issues. Last month our SLA compliance dropped to 78%. Customers are complaining about missing packages and late updates.
+
+Sarah: Exactly. Support is getting overwhelmed with "Where is my order?" calls. Right now, customers only get an email when the order is created, and nothing until it's delivered—or fails to deliver.
+
+Marcus: The problem is how dispatch works right now. Drivers text me updates on WhatsApp or call me when they hit traffic. I manually type those updates into the master Excel sheet (`Delivery_Tracker_2026.xlsx`). Half the time I'm too busy assigning new routes to update the spreadsheet.
+
+Dave: So drivers have no mobile app to update status directly?
+
+Marcus: None. They write delivery times on paper clipboards and hand them in at the end of the shift. If a package gets lost or damaged at 11 AM, we don't know until 6 PM when the driver comes back.
+
+Sarah: Customers want real-time visibility. If Uber Eats can show where a pizza is, why can't we show where a $500 package is? Also, drivers need a way to upload proof of delivery (photo or signature) immediately.
+
+Dave: What about emergency rerouting? Yesterday a truck broke down on I-95 and Marcus spent two hours calling drivers individually to reassign 40 packages.
+
+Marcus: A automated alert system for delayed routes would save hours every single day.

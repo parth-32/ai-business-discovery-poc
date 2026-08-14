@@ -1,0 +1,12 @@
+[10/08/26, 08:15:22] Marcus (Dispatch): @Driver_Tom pkg #8921 for Westside Electronics needs priority delivery before 11 AM.
+[10/08/26, 08:17:05] Driver_Tom: Got it Marcus. Heavy traffic on Route 4. ETA probably 11:30 AM.
+[10/08/26, 08:18:12] Marcus (Dispatch): Try taking 5th Ave. Customer is calling support already.
+[10/08/26, 09:42:10] Driver_Sarah: Truck #4 tire pressure warning. Stopping at gas station. 15 packages delayed 30 mins.
+[10/08/26, 09:43:00] Marcus (Dispatch): Which packages? I need tracking IDs to update the Excel file!
+[10/08/26, 09:45:20] Driver_Sarah: I don't have IDs handy, just package labels on boxes. Can you check my route list?
+[10/08/26, 09:46:11] Marcus (Dispatch): I'm opening the PDF route sheet now... hold on... OK updated row 45 to 60 in Excel.
+[10/08/26, 11:15:40] Driver_Tom: Westside delivered. Left at reception with John. No pen for signature so just took his word.
+[10/08/26, 11:16:30] Marcus (Dispatch): Did you take a photo?
+[10/08/26, 11:17:01] Driver_Tom: No photo capability on my personal phone chat. Can we get proper driver app?
+[10/08/26, 13:00:15] Customer Support (Elena): Hey Marcus, customer for pkg #8921 says reception never received it. Who signed for it?
+[10/08/26, 13:01:22] Marcus (Dispatch): Tom said "John at reception" but no signature recorded... now we have a $300 dispute.

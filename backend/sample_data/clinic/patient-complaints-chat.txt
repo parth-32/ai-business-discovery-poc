@@ -1,0 +1,6 @@
+[11/08/26, 09:10:05] Patient_Sarah: Hi, I need to reschedule my cleaning appointment today from 2 PM to tomorrow afternoon.
+[11/08/26, 09:30:12] FrontDesk_Monica: Hi Sarah, let me check the binder. Tomorrow 3 PM is open. Shall I book it?
+[11/08/26, 09:35:40] Patient_Sarah: Yes please!
+[11/08/26, 14:05:00] Dr_Aris: Monica, why is my 2 PM patient a no-show?
+[11/08/26, 14:06:10] FrontDesk_Monica: Oh no! I wrote down Sarah's cancellation in the chat but forgot to cross her name out in the paper binder!
+[11/08/26, 14:07:05] Dr_Aris: That slot sat empty while we had a 3-week waiting list of patients requesting urgent care. We need automated calendar sync!
