@@ -41,3 +41,8 @@ backend/generated_pocs/*
 Thumbs.db
 .vscode/
 .idea/
+
+# Temporary / Local notes
+temp/
+
+
