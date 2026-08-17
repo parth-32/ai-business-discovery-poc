@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Upload, Link as LinkIcon, FileText, CheckCircle, Trash2 } from "lucide-react";
@@ -11,64 +13,56 @@ import { Badge } from "@/components/ui/badge";
 interface FileUploadProps {
   projectId: string;
   inputs: InputItem[];
-  onRefresh: () => void;
+  onRefresh?: () => void;
 }
 
 export function FileUpload({ projectId, inputs, onRefresh }: FileUploadProps) {
-  const [uploading, setUploading] = useState(false);
+  const queryClient = useQueryClient();
   const [url, setUrl] = useState("");
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const uploadMutation = useMutation({
+    mutationFn: (files: File[]) => api.uploadFiles(projectId, files),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      onRefresh?.();
+    },
+  });
+
+  const urlMutation = useMutation({
+    mutationFn: (urlInput: string) => api.addUrlInput(projectId, urlInput),
+    onSuccess: () => {
+      setUrl("");
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      onRefresh?.();
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (inputId: string) => api.deleteInput(projectId, inputId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      onRefresh?.();
+    },
+  });
+
+  const isUploading = uploadMutation.isPending || urlMutation.isPending;
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
-    setUploading(true);
-
-    const formData = new FormData();
-    Array.from(e.target.files).forEach((file) => formData.append("files", file));
-
-    try {
-      const res = await fetch(`http://localhost:8000/api/projects/${projectId}/inputs`, {
-        method: "POST",
-        body: formData,
-      });
-      if (!res.ok) throw new Error("Upload failed");
-      onRefresh();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setUploading(false);
-    }
+    uploadMutation.mutate(Array.from(e.target.files));
   };
 
-  const handleUrlSubmit = async (e: React.FormEvent) => {
+  const handleUrlSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!url.trim()) return;
-    setUploading(true);
-
-    try {
-      const res = await fetch(`http://localhost:8000/api/projects/${projectId}/inputs/url`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
-      });
-      if (!res.ok) throw new Error("URL add failed");
-      setUrl("");
-      onRefresh();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setUploading(false);
-    }
+    urlMutation.mutate(url);
   };
 
-  const handleDelete = async (inputId: string) => {
-    try {
-      await fetch(`http://localhost:8000/api/projects/${projectId}/inputs/${inputId}`, {
-        method: "DELETE",
-      });
-      onRefresh();
-    } catch (err) {
-      console.error(err);
-    }
+  const handleDelete = (inputId: string) => {
+    deleteMutation.mutate(inputId);
   };
 
   return (
@@ -88,9 +82,9 @@ export function FileUpload({ projectId, inputs, onRefresh }: FileUploadProps) {
                 multiple
                 className="hidden"
                 onChange={handleFileChange}
-                disabled={uploading}
+                disabled={isUploading}
               />
-              <Button variant="outline" size="sm" asChild disabled={uploading}>
+              <Button variant="outline" size="sm" asChild disabled={isUploading}>
                 <span>Select Files</span>
               </Button>
             </label>
@@ -113,7 +107,7 @@ export function FileUpload({ projectId, inputs, onRefresh }: FileUploadProps) {
                 onChange={(e) => setUrl(e.target.value)}
                 className="w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
               />
-              <Button type="submit" size="sm" className="w-full" disabled={uploading || !url.trim()}>
+              <Button type="submit" size="sm" className="w-full" disabled={isUploading || !url.trim()}>
                 Scrape & Add URL Content
               </Button>
             </form>

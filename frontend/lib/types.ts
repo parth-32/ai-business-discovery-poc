@@ -117,6 +117,8 @@ export interface SettingsData {
   llm_provider: LLMProvider;
   gemini_available: boolean;
   ollama_available: boolean;
+  gemini_model?: string;
+  ollama_model?: string;
 }
 
 export interface PipelineProgressEvent {

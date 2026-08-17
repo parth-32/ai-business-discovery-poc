@@ -1,7 +1,10 @@
 "use client";
 
 import React from "react";
-import { PIPELINE_STAGES } from "@/lib/constants";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { PIPELINE_STAGES, API_BASE_URL } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 import { usePipelineStore } from "@/stores/usePipelineStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
@@ -16,29 +19,34 @@ interface PipelineProgressProps {
 }
 
 export function PipelineProgress({ projectId, hasInputs, onComplete }: PipelineProgressProps) {
+  const queryClient = useQueryClient();
   const { isAnalyzing, progress, message, error, startPipeline, updateEvent, setError } =
     usePipelineStore();
-  const { llmProvider } = useSettingsStore();
+  const { llmProvider, geminiModel, ollamaModel, setSettings } = useSettingsStore();
 
-  const handleRunAnalysis = async () => {
-    startPipeline();
+  useQuery({
+    queryKey: ["settings"],
+    queryFn: async () => {
+      const data = await api.getSettings();
+      setSettings(
+        data.llm_provider,
+        data.gemini_available,
+        data.ollama_available,
+        data.gemini_model,
+        data.ollama_model
+      );
+      return data;
+    },
+  });
 
-    try {
-      // Trigger analysis POST endpoint
-      const res = await fetch(`http://localhost:8000/api/projects/${projectId}/analyze`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ llm_provider: llmProvider }),
-      });
+  const activeModelDisplay = llmProvider === "gemini" ? geminiModel : ollamaModel;
 
-      if (!res.ok) {
-        const errorJson = await res.json();
-        throw new Error(errorJson.detail || "Failed to start analysis");
-      }
-
+  const startAnalysisMutation = useMutation({
+    mutationFn: () => api.startAnalysis(projectId, llmProvider),
+    onSuccess: () => {
       // Connect to SSE stream
       const eventSource = new EventSource(
-        `http://localhost:8000/api/projects/${projectId}/stream?provider=${llmProvider}`
+        `${API_BASE_URL}/projects/${projectId}/stream?provider=${llmProvider}`
       );
 
       eventSource.onmessage = (event) => {
@@ -48,6 +56,8 @@ export function PipelineProgress({ projectId, hasInputs, onComplete }: PipelineP
 
           if (data.stage === "poc" && data.status === "complete") {
             eventSource.close();
+            queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+            queryClient.invalidateQueries({ queryKey: ["projects"] });
             onComplete();
           } else if (data.status === "error") {
             eventSource.close();
@@ -63,10 +73,16 @@ export function PipelineProgress({ projectId, hasInputs, onComplete }: PipelineP
         eventSource.close();
         setError("Connection to analysis stream failed");
       };
-    } catch (err: unknown) {
+    },
+    onError: (err: unknown) => {
       const msg = err instanceof Error ? err.message : "Unknown analysis error";
       setError(msg);
-    }
+    },
+  });
+
+  const handleRunAnalysis = () => {
+    startPipeline();
+    startAnalysisMutation.mutate();
   };
 
   return (
@@ -77,7 +93,7 @@ export function PipelineProgress({ projectId, hasInputs, onComplete }: PipelineP
             <h3 className="text-sm font-semibold">AI Business Discovery & POC Pipeline</h3>
             <Badge variant="outline" className="text-xs bg-blue-500/10 text-blue-600 border-blue-200 gap-1 font-medium">
               <Cpu className="h-3 w-3 text-blue-600" />
-              Engine: {llmProvider === "gemini" ? "Gemini 2.5 Flash" : "Ollama (llama3.2:1b)"}
+              Engine: {activeModelDisplay}
             </Badge>
           </div>
           <p className="text-xs text-muted-foreground mt-0.5">
@@ -120,13 +136,12 @@ export function PipelineProgress({ projectId, hasInputs, onComplete }: PipelineP
               return (
                 <div
                   key={s.id}
-                  className={`p-2 rounded border text-center font-medium ${
-                    isDone
-                      ? "bg-emerald-500/10 text-emerald-600 border-emerald-200"
-                      : isCurrent
-                      ? "bg-primary/10 text-primary border-primary animate-pulse"
-                      : "bg-muted/40 text-muted-foreground border-transparent"
-                  }`}
+                  className={cn(
+                    "p-2 rounded border text-center font-medium",
+                    isDone && "bg-emerald-500/10 text-emerald-600 border-emerald-200",
+                    isCurrent && "bg-primary/10 text-primary border-primary animate-pulse",
+                    !isDone && !isCurrent && "bg-muted/40 text-muted-foreground border-transparent"
+                  )}
                 >
                   <div className="truncate">{s.id}</div>
                 </div>

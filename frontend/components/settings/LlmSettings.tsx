@@ -1,57 +1,56 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { cn } from "@/lib/utils";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import type { LLMProvider } from "@/lib/types";
 import { Cpu, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export function LlmSettings() {
+  const queryClient = useQueryClient();
   const {
     llmProvider,
     geminiAvailable,
     ollamaAvailable,
+    geminiModel,
+    ollamaModel,
     setSettings,
-    setProvider,
   } = useSettingsStore();
-  const [loading, setLoading] = useState(false);
 
-  const fetchSettings = useCallback(async () => {
-    try {
-      const res = await fetch("http://localhost:8000/api/settings");
-      if (res.ok) {
-        const data = await res.json();
-        setSettings(
-          data.llm_provider,
-          data.gemini_available,
-          data.ollama_available,
-        );
-      }
-    } catch (err) {
-      console.error("Failed to fetch settings:", err);
-    }
-  }, [setSettings]);
+  useQuery({
+    queryKey: ["settings"],
+    queryFn: async () => {
+      const data = await api.getSettings();
+      setSettings(
+        data.llm_provider,
+        data.gemini_available,
+        data.ollama_available,
+        data.gemini_model,
+        data.ollama_model,
+      );
+      return data;
+    },
+  });
 
-  useEffect(() => {
-    fetchSettings();
-  }, [fetchSettings]);
+  const updateMutation = useMutation({
+    mutationFn: (provider: LLMProvider) => api.updateSettings(provider),
+    onSuccess: (data) => {
+      setSettings(
+        data.llm_provider,
+        data.gemini_available,
+        data.ollama_available,
+        data.gemini_model,
+        data.ollama_model,
+      );
+      queryClient.invalidateQueries({ queryKey: ["settings"] });
+    },
+  });
 
-  const handleProviderChange = async (provider: LLMProvider) => {
-    setLoading(true);
-    try {
-      const res = await fetch("http://localhost:8000/api/settings", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ llm_provider: provider }),
-      });
-      if (res.ok) {
-        setProvider(provider);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  const handleProviderChange = (provider: LLMProvider) => {
+    updateMutation.mutate(provider);
   };
 
   return (
@@ -65,17 +64,21 @@ export function LlmSettings() {
         {/* Gemini Option */}
         <button
           onClick={() => handleProviderChange("gemini")}
-          disabled={loading}
-          className={`px-3 py-1.5 rounded-sm transition-all flex items-center gap-1.5 font-medium text-xs cursor-pointer ${
+          disabled={updateMutation.isPending}
+          className={cn(
+            "px-3 py-1.5 rounded-sm transition-all flex items-center gap-1.5 font-medium text-xs cursor-pointer",
             llmProvider === "gemini"
               ? "bg-blue-600 text-white shadow-sm font-semibold"
               : "text-muted-foreground hover:text-foreground hover:bg-background/50"
-          }`}
+          )}
         >
           <span
-            className={`w-2 h-2 rounded-full ${llmProvider === "gemini" ? "bg-white animate-pulse" : "bg-muted-foreground/40"}`}
+            className={cn(
+              "w-2 h-2 rounded-full",
+              llmProvider === "gemini" ? "bg-white animate-pulse" : "bg-muted-foreground/40"
+            )}
           />
-          gemma-4-26b-a4b-it {llmProvider}
+          Gemini{geminiModel ? ` (${geminiModel})` : ""}
           {geminiAvailable ? (
             <span className="text-[10px] opacity-80">(Ready)</span>
           ) : (
@@ -86,17 +89,21 @@ export function LlmSettings() {
         {/* Ollama Option */}
         <button
           onClick={() => handleProviderChange("ollama")}
-          disabled={loading}
-          className={`px-3 py-1.5 rounded-sm transition-all flex items-center gap-1.5 font-medium text-xs cursor-pointer ${
+          disabled={updateMutation.isPending}
+          className={cn(
+            "px-3 py-1.5 rounded-sm transition-all flex items-center gap-1.5 font-medium text-xs cursor-pointer",
             llmProvider === "ollama"
               ? "bg-blue-600 text-white shadow-sm font-semibold"
               : "text-muted-foreground hover:text-foreground hover:bg-background/50"
-          }`}
+          )}
         >
           <span
-            className={`w-2 h-2 rounded-full ${llmProvider === "ollama" ? "bg-white animate-pulse" : "bg-muted-foreground/40"}`}
+            className={cn(
+              "w-2 h-2 rounded-full",
+              llmProvider === "ollama" ? "bg-white animate-pulse" : "bg-muted-foreground/40"
+            )}
           />
-          Ollama (llama3.2:1b)
+          Ollama{ollamaModel ? ` (${ollamaModel})` : ""}
           {ollamaAvailable ? (
             <span className="text-[10px] opacity-80">(Local)</span>
           ) : (

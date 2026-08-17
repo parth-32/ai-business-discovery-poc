@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/inputs/FileUpload";
 import { SampleDataLoader } from "@/components/home/SampleDataLoader";
@@ -29,7 +30,7 @@ export default function ProjectWorkspacePage() {
   });
 
   const handleRefresh = () => {
-    refetch();
+    queryClient.invalidateQueries({ queryKey: ["project", projectId] });
     queryClient.invalidateQueries({ queryKey: ["projects"] });
   };
 
@@ -96,11 +97,12 @@ export default function ProjectWorkspacePage() {
         <div className="flex border-b border-border space-x-1">
           <button
             onClick={() => setActiveTab("inputs")}
-            className={`px-4 py-2 text-sm font-medium border-b-2 flex items-center gap-2 transition-colors cursor-pointer ${
+            className={cn(
+              "px-4 py-2 text-sm font-medium border-b-2 flex items-center gap-2 transition-colors cursor-pointer",
               activeTab === "inputs"
                 ? "border-primary text-primary font-semibold"
                 : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
+            )}
           >
             <FileCheck className="h-4 w-4" /> 1. Client Inputs ({project.inputs.length})
           </button>
@@ -108,11 +110,13 @@ export default function ProjectWorkspacePage() {
           <button
             onClick={() => setActiveTab("discovery")}
             disabled={!project.discovery}
-            className={`px-4 py-2 text-sm font-medium border-b-2 flex items-center gap-2 transition-colors cursor-pointer ${
+            className={cn(
+              "px-4 py-2 text-sm font-medium border-b-2 flex items-center gap-2 transition-colors cursor-pointer",
               activeTab === "discovery"
                 ? "border-primary text-primary font-semibold"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            } ${!project.discovery ? "opacity-50 cursor-not-allowed" : ""}`}
+                : "border-transparent text-muted-foreground hover:text-foreground",
+              !project.discovery && "opacity-50 cursor-not-allowed"
+            )}
           >
             <Target className="h-4 w-4" /> 2. Business Discovery
           </button>
@@ -120,11 +124,13 @@ export default function ProjectWorkspacePage() {
           <button
             onClick={() => setActiveTab("solution")}
             disabled={!project.solution}
-            className={`px-4 py-2 text-sm font-medium border-b-2 flex items-center gap-2 transition-colors cursor-pointer ${
+            className={cn(
+              "px-4 py-2 text-sm font-medium border-b-2 flex items-center gap-2 transition-colors cursor-pointer",
               activeTab === "solution"
                 ? "border-primary text-primary font-semibold"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            } ${!project.solution ? "opacity-50 cursor-not-allowed" : ""}`}
+                : "border-transparent text-muted-foreground hover:text-foreground",
+              !project.solution && "opacity-50 cursor-not-allowed"
+            )}
           >
             <Lightbulb className="h-4 w-4" /> 3. Solution Outline
           </button>
@@ -132,11 +138,13 @@ export default function ProjectWorkspacePage() {
           <button
             onClick={() => setActiveTab("poc")}
             disabled={!project.poc}
-            className={`px-4 py-2 text-sm font-medium border-b-2 flex items-center gap-2 transition-colors cursor-pointer ${
+            className={cn(
+              "px-4 py-2 text-sm font-medium border-b-2 flex items-center gap-2 transition-colors cursor-pointer",
               activeTab === "poc"
                 ? "border-primary text-primary font-semibold"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            } ${!project.poc ? "opacity-50 cursor-not-allowed" : ""}`}
+                : "border-transparent text-muted-foreground hover:text-foreground",
+              !project.poc && "opacity-50 cursor-not-allowed"
+            )}
           >
             <Code className="h-4 w-4" /> 4. Working POC Application
           </button>
@@ -154,11 +162,11 @@ export default function ProjectWorkspacePage() {
           )}
 
           {activeTab === "discovery" && project.discovery && (
-            <DiscoveryReport discovery={project.discovery} />
+            <DiscoveryReport discovery={project.discovery} inputs={project.inputs} />
           )}
 
           {activeTab === "solution" && project.solution && (
-            <SolutionOutline solution={project.solution} />
+            <SolutionOutline solution={project.solution} discovery={project.discovery} />
           )}
 
           {activeTab === "poc" && project.poc && (

@@ -111,4 +111,6 @@ export const SettingsDataSchema = z.object({
   llm_provider: z.enum(["gemini", "ollama"]),
   gemini_available: z.boolean(),
   ollama_available: z.boolean(),
+  gemini_model: z.string().optional(),
+  ollama_model: z.string().optional(),
 });

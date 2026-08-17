@@ -5,7 +5,15 @@ interface SettingsState {
   llmProvider: LLMProvider;
   geminiAvailable: boolean;
   ollamaAvailable: boolean;
-  setSettings: (provider: LLMProvider, geminiOk: boolean, ollamaOk: boolean) => void;
+  geminiModel: string;
+  ollamaModel: string;
+  setSettings: (
+    provider: LLMProvider,
+    geminiOk: boolean,
+    ollamaOk: boolean,
+    geminiModel?: string,
+    ollamaModel?: string
+  ) => void;
   setProvider: (provider: LLMProvider) => void;
 }
 
@@ -13,11 +21,15 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   llmProvider: "gemini",
   geminiAvailable: true,
   ollamaAvailable: false,
-  setSettings: (provider, geminiOk, ollamaOk) =>
+  geminiModel: "",
+  ollamaModel: "",
+  setSettings: (provider, geminiOk, ollamaOk, geminiModel = "", ollamaModel = "") =>
     set({
       llmProvider: provider,
       geminiAvailable: geminiOk,
       ollamaAvailable: ollamaOk,
+      geminiModel,
+      ollamaModel,
     }),
   setProvider: (provider) => set({ llmProvider: provider }),
 }));

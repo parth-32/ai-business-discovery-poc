@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import type { SolutionData } from "@/lib/types";
+import type { SolutionData, DiscoveryData } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import {
   Accordion,
@@ -9,16 +9,39 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import { Lightbulb, Layers, Users, Monitor, GitCommit, ArrowDown } from "lucide-react";
+import { Lightbulb, Layers, Users, Monitor, GitCommit, ArrowDown, AlertTriangle } from "lucide-react";
 import mermaid from "mermaid";
 
 interface SolutionOutlineProps {
   solution: SolutionData;
+  discovery?: DiscoveryData | null;
 }
 
-export function SolutionOutline({ solution }: SolutionOutlineProps) {
+export function SolutionOutline({ solution, discovery }: SolutionOutlineProps) {
   const mermaidRef = useRef<HTMLDivElement>(null);
   const [renderError, setRenderError] = useState(false);
+
+  const getPainPointInfo = (ppId: string): { label: string; fullText: string } => {
+    if (!discovery || !discovery.pain_points) {
+      return { label: `Solves: ${ppId}`, fullText: `Pain Point ID: ${ppId}` };
+    }
+
+    const found = discovery.pain_points.find(
+      (pp) => pp.id === ppId || pp.id.toLowerCase() === ppId.toLowerCase()
+    );
+
+    if (found) {
+      const shortDesc = found.description.length > 35 
+        ? found.description.slice(0, 32) + "..." 
+        : found.description;
+      return {
+        label: `Solves: ${shortDesc}`,
+        fullText: `[${found.id || ppId}] ${found.description}`,
+      };
+    }
+
+    return { label: `Solves: ${ppId}`, fullText: `Pain Point ID: ${ppId}` };
+  };
 
   useEffect(() => {
     mermaid.initialize({
@@ -85,11 +108,20 @@ export function SolutionOutline({ solution }: SolutionOutlineProps) {
                     {imp.description}
                   </div>
                   <div className="flex flex-wrap gap-1">
-                    {imp.related_pain_point_ids.map((ppId, ppIdx) => (
-                      <Badge key={`${ppId}-${ppIdx}`} variant="outline" className="text-[10px] bg-background font-mono text-amber-700 border-amber-300">
-                        addresses: {ppId}
-                      </Badge>
-                    ))}
+                    {imp.related_pain_point_ids.map((ppId, ppIdx) => {
+                      const { label, fullText } = getPainPointInfo(ppId);
+                      return (
+                        <Badge
+                          key={`${ppId}-${ppIdx}`}
+                          variant="outline"
+                          className="text-[10px] bg-amber-500/10 text-amber-800 border-amber-300 font-medium flex items-center gap-1 cursor-help"
+                          title={fullText}
+                        >
+                          <AlertTriangle className="h-3 w-3 text-amber-600 shrink-0" />
+                          <span>{label}</span>
+                        </Badge>
+                      );
+                    })}
                   </div>
                 </div>
               </div>

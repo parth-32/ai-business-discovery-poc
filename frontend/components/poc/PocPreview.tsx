@@ -2,6 +2,7 @@
 
 import React from "react";
 import type { PocData } from "@/lib/types";
+import { API_BASE_URL } from "@/lib/constants";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Code, Download, ExternalLink } from "lucide-react";
@@ -12,8 +13,8 @@ interface PocPreviewProps {
 }
 
 export function PocPreview({ projectId, poc }: PocPreviewProps) {
-  const iframeSrc = `http://localhost:8000/api/projects/${projectId}/poc`;
-  const downloadUrl = `http://localhost:8000/api/projects/${projectId}/poc/download`;
+  const iframeSrc = `${API_BASE_URL}/projects/${projectId}/poc`;
+  const downloadUrl = `${API_BASE_URL}/projects/${projectId}/poc/download`;
 
   return (
     <div className="space-y-4">

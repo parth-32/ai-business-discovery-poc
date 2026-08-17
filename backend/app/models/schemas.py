@@ -136,6 +136,8 @@ class SettingsResponse(BaseModel):
     llm_provider: str
     gemini_available: bool
     ollama_available: bool
+    gemini_model: str
+    ollama_model: str
 
 
 class PipelineEvent(BaseModel):

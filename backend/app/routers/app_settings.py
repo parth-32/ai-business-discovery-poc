@@ -28,6 +28,8 @@ async def get_settings() -> SettingsResponse:
             llm_provider=provider,
             gemini_available=gemini_ok,
             ollama_available=ollama_ok,
+            gemini_model=settings.GEMINI_MODEL,
+            ollama_model=settings.OLLAMA_MODEL,
         )
     finally:
         conn.close()
@@ -51,6 +53,8 @@ async def update_settings(body: SettingsUpdate) -> SettingsResponse:
             llm_provider=body.llm_provider,
             gemini_available=gemini_ok,
             ollama_available=ollama_ok,
+            gemini_model=settings.GEMINI_MODEL,
+            ollama_model=settings.OLLAMA_MODEL,
         )
     finally:
         conn.close()
